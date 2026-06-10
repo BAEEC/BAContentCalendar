@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Calendar 2569</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F7F5;
+  --surface:#FFFFFF;
+  --accent:#4F46E5;
+  --accent-light:#EEF2FF;
+  --text:#1A1A2E;
+  --text-muted:#6B6B80;
+  --border:rgba(0,0,0,0.08);
+  --border-md:rgba(0,0,0,0.12);
+  --radius:10px;
+  --radius-lg:14px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+}
+body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+
+/* Layout */
+.app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:auto 1fr auto;min-height:100vh}
+.sidebar{grid-row:1/3;background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:1.5rem}
+.topbar{grid-column:2;background:var(--surface);border-bottom:1px solid var(--border);padding:.875rem 1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.main{grid-column:2;padding:1.5rem;overflow:auto}
+.statusbar{grid-column:1/3;background:var(--surface);border-top:1px solid var(--border);padding:.625rem 1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+
+/* Sidebar */
+.logo{font-size:17px;font-weight:700;color:var(--accent);letter-spacing:-.3px}
+.logo span{color:var(--text-muted);font-weight:400;font-size:13px;display:block;margin-top:2px}
+
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-nav button{width:30px;height:30px;border:1px solid var(--border-md);border-radius:8px;background:none;cursor:pointer;color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.month-nav button:hover{background:var(--bg);border-color:var(--accent);color:var(--accent)}
+.month-label{flex:1;text-align:center;font-weight:600;font-size:15px}
+
+.section-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-card{background:var(--bg);border-radius:var(--radius);padding:10px 12px}
+.stat-card .n{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.stat-card .l{font-size:11px;color:var(--text-muted);margin-top:3px}
+
+.plat-list{display:flex;flex-direction:column;gap:4px}
+.plat-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-muted);transition:.12s;border:1px solid transparent}
+.plat-item:hover{background:var(--bg)}
+.plat-item.active{background:var(--accent-light);color:var(--accent);font-weight:500;border-color:rgba(79,70,229,.15)}
+.plat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.plat-count{margin-left:auto;font-size:11px;background:var(--bg);padding:1px 7px;border-radius:10px;color:var(--text-muted)}
+.plat-item.active .plat-count{background:rgba(79,70,229,.1);color:var(--accent)}
+
+.export-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:.15s;margin-top:auto}
+.export-btn:hover{background:#4338CA}
+.export-btn svg{width:15px;height:15px}
+
+/* Topbar */
+.topbar-title{font-size:16px;font-weight:600}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border-md);cursor:pointer;color:var(--text-muted);background:var(--surface);transition:.12s;font-family:inherit;font-weight:400}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sep{flex:1}
+.add-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--accent-light);color:var(--accent);border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.add-btn:hover{background:#e0e7ff}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;padding:6px 0;letter-spacing:.3px}
+.dow.weekend{color:#E24B4A}
+
+.day{min-height:100px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px;cursor:pointer;transition:.15s;position:relative}
+.day:hover{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.07)}
+.day.empty{background:transparent;border-color:transparent;cursor:default;pointer-events:none}
+.day.empty:hover{box-shadow:none}
+.day.today{border-color:var(--accent);border-width:1.5px}
+.day.today .dnum{background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+.day.weekend .dnum-wrap .dnum{color:#E24B4A}
+
+.dnum-wrap{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.dnum{font-size:12px;font-weight:600;color:var(--text-muted)}
+.h-dot{width:5px;height:5px;border-radius:50%;background:#E24B4A;flex-shrink:0}
+.h-name{font-size:9px;color:#E24B4A;background:#FEE2E2;border-radius:4px;padding:1px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-bottom:4px}
+
+.cards{display:flex;flex-direction:column;gap:3px}
+.ccard{font-size:10px;padding:3px 7px;border-radius:6px;display:flex;align-items:center;gap:4px;cursor:pointer;position:relative;transition:.12s}
+.ccard:hover{filter:brightness(.95)}
+.ccard .plat-indicator{width:3px;height:3px;border-radius:50%;flex-shrink:0}
+.ccard .ctitle{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccard .sbadge{font-size:9px;padding:1px 5px;border-radius:6px;flex-shrink:0;font-weight:500}
+.more-tag{font-size:9px;color:var(--text-muted);padding:2px 4px;text-align:center}
+
+/* Platform colors */
+.p-tiktok{background:#F1F0FF;color:#3730A3}
+.p-facebook{background:#EFF6FF;color:#1D4ED8}
+.p-ig{background:#FFF1F2;color:#BE123C}
+.p-lineoa{background:#F0FDF4;color:#15803D}
+.p-youtube{background:#FFF7F7;color:#B91C1C}
+
+/* Status colors */
+.s-draft{background:rgba(107,107,128,.1);color:#4B5563}
+.s-review{background:#FEF3C7;color:#92400E}
+.s-approved{background:#D1FAE5;color:#065F46}
+.s-done{background:#DBEAFE;color:#1E40AF}
+
+/* Status bar */
+.sb-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
+.sb-badge{width:8px;height:8px;border-radius:2px}
+.sb-n{font-weight:600;color:var(--text)}
+.sb-sep{width:1px;height:14px;background:var(--border-md)}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);padding:1.5rem;width:360px;max-width:95vw;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-header h3{font-size:16px;font-weight:600}
+.close-btn{width:28px;height:28px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;font-size:16px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:.12s}
+.close-btn:hover{background:var(--border);color:var(--text)}
+
+.form-row{margin-bottom:14px}
+.form-row label{font-size:12px;font-weight:500;color:var(--text-muted);display:block;margin-bottom:5px}
+.form-row select,.form-row input[type=text],.form-row textarea{width:100%;font-size:13px;padding:8px 10px;border:1px solid var(--border-md);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;outline:none;transition:.12s}
+.form-row select:focus,.form-row input[type=text]:focus,.form-row textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.form-row textarea{min-height:64px;resize:vertical}
+
+.status-pills{display:flex;gap:6px;flex-wrap:wrap}
+.sp{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border-md);cursor:pointer;background:none;font-family:inherit;transition:.12s;color:var(--text-muted)}
+.sp:hover{border-color:var(--accent)}
+.sp.active-draft{background:rgba(107,107,128,.1);color:#374151;border-color:transparent}
+.sp.active-review{background:#FEF3C7;color:#92400E;border-color:transparent}
+.sp.active-approved{background:#D1FAE5;color:#065F46;border-color:transparent}
+.sp.active-done{background:#DBEAFE;color:#1E40AF;border-color:transparent}
+
+.modal-footer{display:flex;gap:8px;margin-top:1.25rem}
+.btn-save{flex:1;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:.15s}
+.btn-save:hover{background:#4338CA}
+.btn-delete{padding:9px 14px;background:none;border:1px solid #FCA5A5;border-radius:8px;color:#B91C1C;font-family:inherit;font-size:14px;cursor:pointer;transition:.15s}
+.btn-delete:hover{background:#FEF2F2}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A2E;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:300;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .topbar{grid-column:1}
+  .main{grid-column:1}
+  .statusbar{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <div class="logo">Content Calendar <span>BA Team 2569</span></div>
+    </div>
+
+    <div>
+      <div class="section-title">เดือน</div>
+      <div class="month-nav">
+        <button id="prevM" aria-label="เดือนก่อน">&#8249;</button>
+        <span class="month-label" id="monthLabel"></span>
+        <button id="nextM" aria-label="เดือนถัดไป">&#8250;</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">ภาพรวมเดือนนี้</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="n" id="s-total">0</div><div class="l">คอนเทนต์ทั้งหมด</div></div>
+        <div class="stat-card"><div class="n" id="s-done">0</div><div class="l">Done แล้ว</div></div>
+        <div class="stat-card"><div class="n" id="s-days">0</div><div class="l">วันที่มีคอนเทนต์</div></div>
+        <div class="stat-card"><div class="n" id="s-pct">0%</div><div class="l">% Done</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">แยกตาม Platform</div>
+      <div class="plat-list" id="platList">
+        <div class="plat-item active" data-p="all"><span class="plat-dot" style="background:#4F46E5"></span> ทั้งหมด <span class="plat-count" id="cnt-all">0</span></div>
+        <div class="plat-item" data-p="tiktok"><span class="plat-dot" style="background:#010101"></span> TikTok <span class="plat-count" id="cnt-tiktok">0</span></div>
+        <div class="plat-item" data-p="facebook"><span class="plat-dot" style="background:#1877F2"></span> Facebook <span class="plat-count" id="cnt-facebook">0</span></div>
+        <div class="plat-item" data-p="ig"><span class="plat-dot" style="background:#E1306C"></span> Instagram <span class="plat-count" id="cnt-ig">0</span></div>
+        <div class="plat-item" data-p="lineoa"><span class="plat-dot" style="background:#06C755"></span> Line OA <span class="plat-count" id="cnt-lineoa">0</span></div>
+        <div class="plat-item" data-p="youtube"><span class="plat-dot" style="background:#FF0000"></span> YouTube <span class="plat-count" id="cnt-youtube">0</span></div>
+      </div>
+    </div>
+
+    <button class="export-btn" id="exportBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Export เป็น CSV
+    </button>
+  </aside>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <span class="topbar-title" id="topTitle"></span>
+    <div class="filter-chips" id="filterChips">
+      <button class="chip active" data-s="all">ทุก status</button>
+      <button class="chip" data-s="draft">Draft</button>
+      <button class="chip" data-s="review">In review</button>
+      <button class="chip" data-s="approved">Approved</button>
+      <button class="chip" data-s="done">Done</button>
+    </div>
+    <div class="sep"></div>
+    <button class="add-btn" id="addBtn">&#43; เพิ่มคอนเทนต์</button>
+  </header>
+
+  <!-- Calendar -->
+  <main class="main">
+    <div class="cal-grid" id="calGrid">
+      <div class="dow weekend">อา</div>
+      <div class="dow">จ</div>
+      <div class="dow">อ</div>
+      <div class="dow">พ</div>
+      <div class="dow">พฤ</div>
+      <div class="dow">ศ</div>
+      <div class="dow weekend">ส</div>
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <footer class="statusbar">
+    <div class="sb-item"><div class="sb-badge" style="background:rgba(107,107,128,.3)"></div><span class="sb-n" id="sb-draft">0</span> Draft</div>
+    <div class="sb-sep"></div>
+    <div class="sb-item"><div class="sb-badge" style="background:#FCD34D"></div><span class="sb-n" id="sb-review">0</span> In review</div>
+    <div class="sb-sep"></div>
+    <div class="sb-item"><div class="sb-badge" style="background:#6EE7B7"></div><span class="sb-n" id="sb-approved">0</span> Approved</div>
+    <div class="sb-sep"></div>
+    <div class="sb-item"><div class="sb-badge" style="background:#93C5FD"></div><span class="sb-n" id="sb-done">0</span> Done</div>
+    <div class="sep" style="flex:1"></div>
+    <div class="sb-item" style="font-size:11px;color:var(--text-muted)">บันทึกอัตโนมัติใน browser &#183; Export เพื่อสำรองข้อมูล</div>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">เพิ่มคอนเทนต์</h3>
+      <button class="close-btn" id="closeModal">&#215;</button>
+    </div>
+
+    <div class="form-row">
+      <label>วันที่</label>
+      <input type="text" id="f-date" readonly style="background:var(--bg);cursor:default">
+    </div>
+    <div class="form-row">
+      <label>Platform</label>
+      <select id="f-plat">
+        <option value="tiktok">TikTok</option>
+        <option value="facebook">Facebook</option>
+        <option value="ig">Instagram</option>
+        <option value="lineoa">Line OA</option>
+        <option value="youtube">YouTube</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>หัวข้อคอนเทนต์</label>
+      <input type="text" id="f-title" placeholder="เช่น วันเฉลิมพระชนมพรรษา, โปรโมชั่นเดือนนี้...">
+    </div>
+    <div class="form-row">
+      <label>ประเภทคอนเทนต์</label>
+      <select id="f-type">
+        <option>Live Stream</option>
+        <option>คลิปสั้น</option>
+        <option>คลิปยาว</option>
+        <option>Short Reel</option>
+        <option>Text & Picture</option>
+        <option>อินโฟกราฟิก</option>
+        <option>Story</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>รายละเอียด (ถ้ามี)</label>
+      <textarea id="f-note" placeholder="Briefing, caption, hashtag..."></textarea>
+    </div>
+    <div class="form-row">
+      <label>Status</label>
+      <div class="status-pills">
+        <button class="sp active-draft" data-s="draft">Draft</button>
+        <button class="sp" data-s="review">In review</button>
+        <button class="sp" data-s="approved">Approved</button>
+        <button class="sp" data-s="done">Done</button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-save" id="saveBtn">บันทึก</button>
+      <button class="btn-delete" id="deleteBtn" style="display:none">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const PLAT_LABELS = {tiktok:'TikTok',facebook:'Facebook',ig:'Instagram',lineoa:'Line OA',youtube:'YouTube'};
+const THBE = 543;
+
+// Thai holidays 2569
+const HOLIDAYS = {
+  '2569-1-1':'วันขึ้นปีใหม่',
+  '2569-2-12':'วันมาฆบูชา',
+  '2569-4-6':'วันจักรี',
+  '2569-4-13':'วันสงกรานต์',
+  '2569-4-14':'วันสงกรานต์',
+  '2569-4-15':'วันสงกรานต์',
+  '2569-5-1':'วันแรงงาน',
+  '2569-5-12':'วันวิสาขบูชา',
+  '2569-5-13':'วันพืชมงคล',
+  '2569-6-1':'ชดเชยวันวิสาขบูชา',
+  '2569-6-3':'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',
+  '2569-7-28':'วันเฉลิมฯ ร.10',
+  '2569-7-29':'วันอาสาฬหบูชา',
+  '2569-7-30':'วันเข้าพรรษา',
+  '2569-8-12':'วันแม่แห่งชาติ',
+  '2569-10-13':'วันนวมินทรมหาราช',
+  '2569-10-23':'วันปิยมหาราช',
+  '2569-12-5':'วันพ่อแห่งชาติ',
+  '2569-12-10':'วันรัฐธรรมนูญ',
+  '2569-12-31':'วันสิ้นปี',
+};
+
+// Sample initial data
+const INIT = {
+  '2569-6-1':[{plat:'tiktok',title:'Live Stream',type:'Live Stream',note:'ชดเชยวันวิสาขบูชา',status:'approved'},{plat:'facebook',title:'Live Stream',type:'Live Stream',note:'',status:'approved'}],
+  '2569-6-3':[{plat:'facebook',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'},{plat:'ig',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'}],
+  '2569-6-4':[{plat:'tiktok',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'draft'},{plat:'youtube',title:'Short Reel',type:'Short Reel',note:'',status:'draft'}],
+  '2569-6-5':[{plat:'facebook',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'},{plat:'ig',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'}],
+  '2569-7-6':[{plat:'tiktok',title:'คลิปยาว',type:'คลิปยาว',note:'',status:'draft'},{plat:'facebook',title:'คลิปยาว',type:'คลิปยาว',note:'',status:'draft'}],
+  '2569-7-28':[{plat:'facebook',title:'วันเฉลิมฯ ร.10',type:'Text & Picture',note:'',status:'approved'},{plat:'ig',title:'วันเฉลิมฯ ร.10',type:'Text & Picture',note:'',status:'approved'}],
+  '2569-8-12':[{plat:'facebook',title:'วันแม่แห่งชาติ',type:'Text & Picture',note:'',status:'approved'},{plat:'ig',title:'วันแม่แห่งชาติ',type:'Text & Picture',note:'',status:'approved'},{plat:'tiktok',title:'วันแม่แห่งชาติ',type:'คลิปสั้น',note:'',status:'review'}],
+};
+
+let data = {};
+try { data = JSON.parse(localStorage.getItem('contentCalendar2569') || 'null') || JSON.parse(JSON.stringify(INIT)); }
+catch(e) { data = JSON.parse(JSON.stringify(INIT)); }
+
+let curMonth = 5; // 0-indexed, default June (index 5)
+let curYear = 2569;
+let activePlat = 'all';
+let activeStatus = 'all';
+let editKey = null;
+let editIdx = null;
+let modalStatus = 'draft';
+let modalDate = null;
+
+function save() {
+  localStorage.setItem('contentCalendar2569', JSON.stringify(data));
+}
+
+function thToGreg(y, m, d) { return new Date(y - THBE, m, d); }
+function gregToTh(date) { return date.getFullYear() + THBE; }
+function dateKey(y, m, d) { return `${y}-${m+1}-${d}`; }
+
+function getMonthItems() {
+  const items = [];
+  const days = new Date(curYear - THBE, curMonth + 1, 0).getDate();
+  for (let d = 1; d <= days; d++) {
+    const k = dateKey(curYear, curMonth, d);
+    (data[k] || []).forEach(c => items.push({...c, key: k, date: d}));
+  }
+  return items;
+}
+
+function updateStats() {
+  const items = getMonthItems();
+  const days = new Date(curYear - THBE, curMonth + 1, 0).getDate();
+
+  document.getElementById('s-total').textContent = items.length;
+  const doneCount = items.filter(i => i.status === 'done').length;
+  document.getElementById('s-done').textContent = doneCount;
+
+  const activeDays = new Set(items.map(i => i.key)).size;
+  document.getElementById('s-days').textContent = activeDays;
+  document.getElementById('s-pct').textContent = items.length ? Math.round(doneCount / items.length * 100) + '%' : '0%';
+
+  document.getElementById('cnt-all').textContent = items.length;
+  ['tiktok','facebook','ig','lineoa','youtube'].forEach(p => {
+    document.getElementById('cnt-' + p).textContent = items.filter(i => i.plat === p).length;
+  });
+
+  ['draft','review','approved','done'].forEach(s => {
+    document.getElementById('sb-' + s).textContent = items.filter(i => i.status === s).length;
+  });
+}
+
+function render() {
+  const label = MONTHS[curMonth] + ' ' + curYear;
+  document.getElementById('monthLabel').textContent = label;
+  document.getElementById('topTitle').textContent = 'ปฏิทินคอนเทนต์ — ' + label;
+
+  const grid = document.getElementById('calGrid');
+  grid.querySelectorAll('.day').forEach(d => d.remove());
+
+  const firstDay = thToGreg(curYear, curMonth, 1).getDay();
+  const daysInMonth = new Date(curYear - THBE, curMonth + 1, 0).getDate();
+  const today = new Date();
+  const todayKey = dateKey(gregToTh(today), today.getMonth(), today.getDate());
+
+  for (let i = 0; i < firstDay; i++) {
+    const e = document.createElement('div');
+    e.className = 'day empty';
+    grid.appendChild(e);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dow = thToGreg(curYear, curMonth, d).getDay();
+    const key = dateKey(curYear, curMonth, d);
+    const isWeekend = dow === 0 || dow === 6;
+    const isToday = key === todayKey;
+
+    const div = document.createElement('div');
+    div.className = 'day' + (isWeekend ? ' weekend' : '') + (isToday ? ' today' : '');
+    div.dataset.key = key;
+
+    // Day number
+    const dnWrap = document.createElement('div');
+    dnWrap.className = 'dnum-wrap';
+    const dn = document.createElement('span');
+    dn.className = 'dnum';
+    dn.textContent = d;
+    dnWrap.appendChild(dn);
+    if (HOLIDAYS[key]) {
+      const hdot = document.createElement('span');
+      hdot.className = 'h-dot';
+      dnWrap.appendChild(hdot);
+    }
+    div.appendChild(dnWrap);
+
+    if (HOLIDAYS[key]) {
+      const hn = document.createElement('span');
+      hn.className = 'h-name';
+      hn.textContent = HOLIDAYS[key];
+      div.appendChild(hn);
+    }
+
+    // Cards
+    let items = (data[key] || []).filter(c =>
+      (activePlat === 'all' || c.plat === activePlat) &&
+      (activeStatus === 'all' || c.status === activeStatus)
+    );
+
+    const cards = document.createElement('div');
+    cards.className = 'cards';
+    const show = items.slice(0, 3);
+    const rest = items.length - 3;
+
+    show.forEach((c, i) => {
+      const realIdx = (data[key] || []).indexOf(c);
+      const cc = document.createElement('div');
+      cc.className = 'ccard p-' + c.plat;
+      cc.innerHTML = `<span class="plat-indicator" style="background:${platColor(c.plat)}"></span><span class="ctitle">${c.title || c.type}</span><span class="sbadge s-${c.status}">${statusLabel(c.status)}</span>`;
+      cc.addEventListener('click', e => { e.stopPropagation(); openModal(key, realIdx); });
+      cards.appendChild(cc);
+    });
+    if (rest > 0) {
+      const m = document.createElement('div');
+      m.className = 'more-tag';
+      m.textContent = '+' + rest + ' อื่นๆ';
+      cards.appendChild(m);
+    }
+    div.appendChild(cards);
+
+    div.addEventListener('click', () => openModal(key, null));
+    grid.appendChild(div);
+  }
+
+  updateStats();
+}
+
+function platColor(p) {
+  return {tiktok:'#010101',facebook:'#1877F2',ig:'#E1306C',lineoa:'#06C755',youtube:'#FF0000'}[p] || '#666';
+}
+function statusLabel(s) {
+  return {draft:'Draft',review:'Review',approved:'✓ OK',done:'Done'}[s] || s;
+}
+
+function openModal(key, idx) {
+  editKey = key;
+  editIdx = idx;
+  const parts = key.split('-');
+  const dNum = parseInt(parts[2]);
+  const mName = MONTHS[parseInt(parts[1]) - 1];
+  modalDate = key;
+
+  document.getElementById('f-date').value = dNum + ' ' + mName + ' ' + parts[0];
+  document.getElementById('modal-title').textContent = idx !== null ? 'แก้ไขคอนเทนต์' : 'เพิ่มคอนเทนต์';
+  document.getElementById('deleteBtn').style.display = idx !== null ? '' : 'none';
+
+  if (idx !== null && data[key] && data[key][idx]) {
+    const c = data[key][idx];
+    document.getElementById('f-plat').value = c.plat;
+    document.getElementById('f-title').value = c.title || '';
+    document.getElementById('f-type').value = c.type || 'Live Stream';
+    document.getElementById('f-note').value = c.note || '';
+    setStatus(c.status);
+  } else {
+    document.getElementById('f-plat').value = activePlat !== 'all' ? activePlat : 'tiktok';
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-type').value = 'Live Stream';
+    document.getElementById('f-note').value = '';
+    setStatus('draft');
+  }
+
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('f-title').focus();
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  editKey = null; editIdx = null;
+}
+
+function setStatus(s) {
+  modalStatus = s;
+  document.querySelectorAll('.status-pills .sp').forEach(b => {
+    b.className = 'sp' + (b.dataset.s === s ? ' active-' + s : '');
+  });
+}
+
+document.querySelectorAll('.status-pills .sp').forEach(b =>
+  b.addEventListener('click', () => setStatus(b.dataset.s))
+);
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const c = {
+    plat: document.getElementById('f-plat').value,
+    title: document.getElementById('f-title').value.trim() || document.getElementById('f-type').value,
+    type: document.getElementById('f-type').value,
+    note: document.getElementById('f-note').value.trim(),
+    status: modalStatus
+  };
+  if (!data[editKey]) data[editKey] = [];
+  if (editIdx !== null) data[editKey][editIdx] = c;
+  else data[editKey].push(c);
+  save();
+  closeModal();
+  render();
+  showToast('บันทึกแล้ว ✓');
+});
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  if (editIdx !== null && data[editKey]) {
+    data[editKey].splice(editIdx, 1);
+    if (!data[editKey].length) delete data[editKey];
+    save();
+    closeModal();
+    render();
+    showToast('ลบแล้ว');
+  }
+});
+
+document.getElementById('closeModal').addEventListener('click', closeModal);
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay')) closeModal();
+});
+
+document.getElementById('prevM').addEventListener('click', () => {
+  curMonth--; if (curMonth < 0) { curMonth = 11; curYear--; } render();
+});
+document.getElementById('nextM').addEventListener('click', () => {
+  curMonth++; if (curMonth > 11) { curMonth = 0; curYear++; } render();
+});
+
+document.getElementById('platList').addEventListener('click', e => {
+  const item = e.target.closest('[data-p]');
+  if (!item) return;
+  activePlat = item.dataset.p;
+  document.querySelectorAll('.plat-item').forEach(x => x.classList.remove('active'));
+  item.classList.add('active');
+  render();
+});
+
+document.getElementById('filterChips').addEventListener('click', e => {
+  const chip = e.target.closest('[data-s]');
+  if (!chip) return;
+  activeStatus = chip.dataset.s;
+  document.querySelectorAll('.filter-chips .chip').forEach(x => x.classList.remove('active'));
+  chip.classList.add('active');
+  render();
+});
+
+document.getElementById('addBtn').addEventListener('click', () => {
+  // Open modal for today or first of current month
+  const today = new Date();
+  const ty = gregToTh(today);
+  let key;
+  if (ty === curYear && today.getMonth() === curMonth) {
+    key = dateKey(curYear, curMonth, today.getDate());
+  } else {
+    key = dateKey(curYear, curMonth, 1);
+  }
+  openModal(key, null);
+});
+
+// Export CSV
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const rows = [['วันที่','เดือน','ปี','Platform','หัวข้อ','ประเภท','Status','รายละเอียด','วันสำคัญ']];
+  const allKeys = Object.keys(data).sort();
+  allKeys.forEach(key => {
+    const [y, m, d] = key.split('-');
+    (data[key] || []).forEach(c => {
+      rows.push([
+        d, MONTHS[parseInt(m)-1], y,
+        PLAT_LABELS[c.plat] || c.plat,
+        c.title || '', c.type || '',
+        {draft:'Draft',review:'In review',approved:'Approved',done:'Done'}[c.status] || c.status,
+        c.note || '',
+        HOLIDAYS[key] || ''
+      ]);
+    });
+  });
+
+  const bom = '\uFEFF';
+  const csv = bom + rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `content-calendar-2569.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Export เสร็จแล้ว ✓');
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Keyboard shortcut — Escape closes modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+render();
+</script>
+</body>
+</html>
