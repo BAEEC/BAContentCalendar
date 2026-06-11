@@ -436,18 +436,51 @@ const HOLIDAYS = {
 
 // Sample initial data
 const INIT = {
-  '2569-6-1':[{plat:'tiktok',title:'Live สด',type:'Live สด',note:'ชดเชยวันวิสาขบูชา',status:'approved'},{plat:'facebook',title:'Live สด',type:'Live สด',note:'',status:'approved'}],
-  '2569-6-3':[{plat:'facebook',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'},{plat:'ig',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'}],
-  '2569-6-4':[{plat:'tiktok',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'draft'},{plat:'youtube',title:'Short Reel',type:'Short Reel',note:'',status:'draft'}],
-  '2569-6-5':[{plat:'facebook',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'},{plat:'ig',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'}],
-  '2569-7-6':[{plat:'tiktok',title:'คลิปยาว',type:'คลิปยาว',note:'',status:'draft'},{plat:'facebook',title:'คลิปยาว',type:'คลิปยาว',note:'',status:'draft'}],
-  '2569-7-28':[{plat:'facebook',title:'วันเฉลิมฯ ร.10',type:'Text & Picture',note:'',status:'approved'},{plat:'ig',title:'วันเฉลิมฯ ร.10',type:'Text & Picture',note:'',status:'approved'}],
-  '2569-8-12':[{plat:'facebook',title:'วันแม่แห่งชาติ',type:'Text & Picture',note:'',status:'approved'},{plat:'ig',title:'วันแม่แห่งชาติ',type:'Text & Picture',note:'',status:'approved'},{plat:'tiktok',title:'วันแม่แห่งชาติ',type:'คลิปสั้น',note:'',status:'review'}],
+  '2569-6-1':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"}],
+  '2569-6-10':[{"plat":"tiktok","title":"Live สด กิจกรรม","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย. #พ","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-11':[{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-12':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-15':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"}],
+  '2569-6-17':[{"plat":"tiktok","title":"Live สด EEC","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"EEC","note":"EEC - Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-18':[{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-19':[{"plat":"tiktok","title":"Live สด EEC","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"EEC","note":"EEC - Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-22':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"}],
+  '2569-6-24':[{"plat":"tiktok","title":"Live สด BAIC","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"BAIC","note":"BAIC - Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-25':[{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-26':[{"plat":"tiktok","title":"Live สด ทางไกล","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"ทางไกล","note":"ทางไกล - กิจกรรมพิเศษ","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-29':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"}],
+  '2569-6-3':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-4':[{"plat":"tiktok","title":"ปฐมนิเทศคณะ","type":"Live สด","time":"08:00","timeEnd":"10:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"กิจกรรมพิเศษ ปฐมนิเทศคณะ","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-5':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"},{"plat":"tiktok","title":"Live สด รับสมัคร","type":"Live สด","time":"12:00","timeEnd":"13:30","team":"รับสมัคร","note":"Live รับสมัคร ประจำสัปดาห์","status":"approved"}],
+  '2569-6-6':[{"plat":"tiktok","title":"ปฐมนิเทศสถาบัน","type":"Live สด","time":"17:00","timeEnd":"20:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"กิจกรรมพิเศษ ปฐมนิเทศสถาบัน","status":"approved"}],
+  '2569-6-8':[{"plat":"tiktok","title":"Live สด","type":"Live สด","time":"16:00","timeEnd":"17:00","team":"กิจกรรม (แจ้งวัฒนะ)","note":"Live ประจำเดือน มิ.ย.","status":"approved"}],
 };
 
 let data = {};
-try { data = JSON.parse(localStorage.getItem('contentCalendar2569') || 'null') || JSON.parse(JSON.stringify(INIT)); }
-catch(e) { data = JSON.parse(JSON.stringify(INIT)); }
+try {
+  const saved = JSON.parse(localStorage.getItem('contentCalendar2569') || 'null');
+  if (saved) {
+    // Merge INIT into saved — INIT entries always win (pre-loaded schedule)
+    data = saved;
+    Object.keys(INIT).forEach(key => {
+      if (!data[key]) {
+        data[key] = JSON.parse(JSON.stringify(INIT[key]));
+      } else {
+        // Add INIT items that don't exist yet (match by title+time+team)
+        INIT[key].forEach(initItem => {
+          const exists = data[key].some(d =>
+            d.title === initItem.title && d.time === initItem.time && d.team === initItem.team
+          );
+          if (!exists) data[key].push(JSON.parse(JSON.stringify(initItem)));
+        });
+      }
+    });
+  } else {
+    data = JSON.parse(JSON.stringify(INIT));
+  }
+} catch(e) {
+  data = JSON.parse(JSON.stringify(INIT));
+}
 
 let curMonth = 5; // 0-indexed, default June (index 5)
 let curYear = 2569;
