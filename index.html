@@ -181,6 +181,17 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
         <div class="stat-card"><div class="n" id="s-days">0</div><div class="l">วันที่มีคอนเทนต์</div></div>
         <div class="stat-card"><div class="n" id="s-pct">0%</div><div class="l">% Done</div></div>
       </div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">แยกย่อย TikTok</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:8px;padding:7px 10px">
+          <span style="font-size:12px;color:var(--text-muted)">🔴 Live สด</span>
+          <span style="font-size:16px;font-weight:700;color:var(--text)" id="s-tt-live">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:8px;padding:7px 10px">
+          <span style="font-size:12px;color:var(--text-muted)">🎬 Clip Video</span>
+          <span style="font-size:16px;font-weight:700;color:var(--text)" id="s-tt-clip">0</span>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -188,10 +199,10 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
       <div class="plat-list" id="platList">
         <div class="plat-item active" data-p="all"><span class="plat-dot" style="background:#4F46E5"></span> ทั้งหมด <span class="plat-count" id="cnt-all">0</span></div>
         <div class="plat-item" data-p="tiktok"><span class="plat-dot" style="background:#010101"></span> TikTok <span class="plat-count" id="cnt-tiktok">0</span></div>
-        <div class="plat-item" data-p="facebook"><span class="plat-dot" style="background:#1877F2"></span> Facebook <span class="plat-count" id="cnt-facebook">0</span></div>
         <div class="plat-item" data-p="ig"><span class="plat-dot" style="background:#E1306C"></span> Instagram <span class="plat-count" id="cnt-ig">0</span></div>
-        <div class="plat-item" data-p="lineoa"><span class="plat-dot" style="background:#06C755"></span> Line OA <span class="plat-count" id="cnt-lineoa">0</span></div>
+        <div class="plat-item" data-p="facebook"><span class="plat-dot" style="background:#1877F2"></span> Facebook <span class="plat-count" id="cnt-facebook">0</span></div>
         <div class="plat-item" data-p="youtube"><span class="plat-dot" style="background:#FF0000"></span> YouTube <span class="plat-count" id="cnt-youtube">0</span></div>
+        <div class="plat-item" data-p="lineoa"><span class="plat-dot" style="background:#06C755"></span> Line OA <span class="plat-count" id="cnt-lineoa">0</span></div>
       </div>
     </div>
 
@@ -275,6 +286,19 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
       </select>
     </div>
     <div class="form-row">
+      <label>ทีม</label>
+      <select id="f-team">
+        <option value="">— ดำเนินการโดย —</option>
+        <option value="กิจกรรม (แจ้งวัฒนะ)">กิจกรรม (แจ้งวัฒนะ)</option>
+        <option value="รับสมัคร">รับสมัคร</option>
+        <option value="BAIC">BAIC</option>
+        <option value="EEC">EEC</option>
+        <option value="MBA">MBA</option>
+        <option value="ทางไกล">ทางไกล</option>
+        <option value="CCDS">CCDS</option>
+      </select>
+    </div>
+    <div class="form-row">
       <label>หัวข้อคอนเทนต์</label>
       <input type="text" id="f-title" list="title-suggestions" placeholder="เลือกหรือพิมพ์หัวข้อ...">
       <datalist id="title-suggestions">
@@ -295,7 +319,7 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="form-row">
       <label>ประเภทคอนเทนต์</label>
       <select id="f-type">
-        <option>Live Stream</option>
+        <option>Live สด</option>
         <option>คลิปสั้น</option>
         <option>คลิปยาว</option>
         <option>Short Reel</option>
@@ -327,10 +351,40 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
 
 <div class="toast" id="toast"></div>
 
+<!-- Conflict Alert -->
+<div id="conflict-alert" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;width:320px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center">
+    <div style="width:48px;height:48px;background:#FEE2E2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:22px">🚫</div>
+    <div style="font-weight:600;font-size:15px;color:#1A1A2E;margin-bottom:8px">ไม่สามารถบันทึกได้</div>
+    <div class="conflict-msg" style="font-size:13px;color:#6B6B80;white-space:pre-line;line-height:1.6;margin-bottom:1.25rem"></div>
+    <button onclick="document.getElementById('conflict-alert').style.display='none'" style="padding:9px 28px;background:#4F46E5;color:#fff;border:none;border-radius:8px;font-size:14px;font-family:inherit;font-weight:500;cursor:pointer">รับทราบ</button>
+  </div>
+</div>
+
 <script>
 const MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const PLAT_LABELS = {tiktok:'TikTok',facebook:'Facebook',ig:'Instagram',lineoa:'Line OA',youtube:'YouTube'};
 const THBE = 543;
+
+const TEAM_COLORS = {
+  'กิจกรรม (แจ้งวัฒนะ)': { bg: '#FFF3E0', text: '#E65100', border: '#FB8C00' },
+  'EEC':                   { bg: '#E8F5E9', text: '#1B5E20', border: '#43A047' },
+  'ทางไกล':               { bg: '#E3F2FD', text: '#0D47A1', border: '#1E88E5' },
+  'BAIC':                  { bg: '#F3E5F5', text: '#4A148C', border: '#8E24AA' },
+  'CCDS':                  { bg: '#FCE4EC', text: '#880E4F', border: '#E91E63' },
+  'รับสมัคร':             { bg: '#E0F7FA', text: '#006064', border: '#00ACC1' },
+  'MBA':                   { bg: '#FFF8E1', text: '#F57F17', border: '#FFB300' },
+};
+function teamStyle(team) {
+  const c = TEAM_COLORS[team];
+  if (!c) return '';
+  return `background:${c.bg};border-left:3px solid ${c.border};color:${c.text};`;
+}
+function teamBadgeStyle(team) {
+  const c = TEAM_COLORS[team];
+  if (!c) return 'background:rgba(107,107,128,.1);color:#4B5563;';
+  return `background:${c.bg};color:${c.text};border:1px solid ${c.border}33;`;
+}
 
 // Thai holidays 2569–2570
 const HOLIDAYS = {
@@ -382,7 +436,7 @@ const HOLIDAYS = {
 
 // Sample initial data
 const INIT = {
-  '2569-6-1':[{plat:'tiktok',title:'Live Stream',type:'Live Stream',note:'ชดเชยวันวิสาขบูชา',status:'approved'},{plat:'facebook',title:'Live Stream',type:'Live Stream',note:'',status:'approved'}],
+  '2569-6-1':[{plat:'tiktok',title:'Live สด',type:'Live สด',note:'ชดเชยวันวิสาขบูชา',status:'approved'},{plat:'facebook',title:'Live สด',type:'Live สด',note:'',status:'approved'}],
   '2569-6-3':[{plat:'facebook',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'},{plat:'ig',title:'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',type:'Text & Picture',note:'',status:'done'}],
   '2569-6-4':[{plat:'tiktok',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'draft'},{plat:'youtube',title:'Short Reel',type:'Short Reel',note:'',status:'draft'}],
   '2569-6-5':[{plat:'facebook',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'},{plat:'ig',title:'คลิปสั้น',type:'คลิปสั้น',note:'',status:'review'}],
@@ -438,6 +492,11 @@ function updateStats() {
   ['tiktok','facebook','ig','lineoa','youtube'].forEach(p => {
     document.getElementById('cnt-' + p).textContent = items.filter(i => i.plat === p).length;
   });
+
+  // TikTok breakdown
+  const ttItems = items.filter(i => i.plat === 'tiktok');
+  document.getElementById('s-tt-live').textContent = ttItems.filter(i => i.type === 'Live สด').length;
+  document.getElementById('s-tt-clip').textContent = ttItems.filter(i => i.type !== 'Live สด').length;
 
   ['draft','review','approved','done'].forEach(s => {
     document.getElementById('sb-' + s).textContent = items.filter(i => i.status === s).length;
@@ -509,7 +568,10 @@ function render() {
       const realIdx = (data[key] || []).indexOf(c);
       const cc = document.createElement('div');
       cc.className = 'ccard p-' + c.plat;
-      cc.innerHTML = `<span class="plat-indicator" style="background:${platColor(c.plat)}"></span><span class="ctitle">${c.time ? '<span style="opacity:.6;font-size:9px;margin-right:2px">'+c.time+(c.timeEnd?'–'+c.timeEnd:'')+'</span>' : ''}${c.title || c.type}</span><span class="sbadge s-${c.status}">${statusLabel(c.status)}</span>`;
+      if (c.team && TEAM_COLORS[c.team]) {
+        cc.style.cssText = teamStyle(c.team);
+      }
+      cc.innerHTML = `<span class="plat-indicator" style="background:${platColor(c.plat)}"></span><span class="ctitle">${c.time ? '<span style="opacity:.6;font-size:9px;margin-right:2px">'+c.time+(c.timeEnd?'–'+c.timeEnd:'')+'</span>' : ''}${c.title || c.type}${c.team ? '<span style="font-size:9px;padding:1px 5px;border-radius:4px;margin-left:2px;'+teamBadgeStyle(c.team)+'">'+c.team+'</span>' : ''}</span><span class="sbadge s-${c.status}">${statusLabel(c.status)}</span>`;
       cc.addEventListener('click', e => { e.stopPropagation(); openModal(key, realIdx); });
       cards.appendChild(cc);
     });
@@ -553,14 +615,16 @@ function openModal(key, idx) {
     document.getElementById('f-title').value = c.title || '';
     document.getElementById('f-time').value = c.time || '09:00';
     document.getElementById('f-time-end').value = c.timeEnd || '10:00';
-    document.getElementById('f-type').value = c.type || 'Live Stream';
+    document.getElementById('f-team').value = c.team || '';
+    document.getElementById('f-type').value = c.type || 'Live สด';
     document.getElementById('f-note').value = c.note || '';
     setStatus(c.status);
   } else {
     document.getElementById('f-plat').value = activePlat !== 'all' ? activePlat : 'tiktok';
     document.getElementById('f-title').value = '';
-    document.getElementById('f-type').value = 'Live Stream';
+    document.getElementById('f-type').value = 'Live สด';
     document.getElementById('f-note').value = '';
+    document.getElementById('f-team').value = '';
     setStatus('draft');
   }
 
@@ -590,10 +654,28 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     title: document.getElementById('f-title').value.trim() || document.getElementById('f-type').value,
     time: document.getElementById('f-time').value,
     timeEnd: document.getElementById('f-time-end').value,
+    team: document.getElementById('f-team').value,
     type: document.getElementById('f-type').value,
     note: document.getElementById('f-note').value.trim(),
     status: modalStatus
   };
+
+  // ตรวจสอบ Live สด ทับซ้อน
+  if (c.type === 'Live สด' && c.time && c.timeEnd) {
+    const existing = (data[editKey] || []).filter((item, i) => i !== editIdx && item.type === 'Live สด' && item.time && item.timeEnd);
+    const newStart = c.time.replace(':', '');
+    const newEnd = c.timeEnd.replace(':', '');
+    const conflict = existing.find(item => {
+      const s = item.time.replace(':', '');
+      const e = item.timeEnd.replace(':', '');
+      return !(newEnd <= s || newStart >= e);
+    });
+    if (conflict) {
+      showConflictAlert(`ไม่สามารถลงเวลาทับซ้อนกันได้\nมี Live สด อยู่แล้วในช่วง ${conflict.time}–${conflict.timeEnd}\n(${conflict.team || conflict.plat || 'อีกรายการ'})`);
+      return;
+    }
+  }
+
   if (!data[editKey]) data[editKey] = [];
   if (editIdx !== null) data[editKey][editIdx] = c;
   else data[editKey].push(c);
@@ -659,7 +741,7 @@ document.getElementById('addBtn').addEventListener('click', () => {
 
 // Export CSV
 document.getElementById('exportBtn').addEventListener('click', () => {
-  const rows = [['วันที่','เดือน','ปี','เวลาเริ่ม','เวลาสิ้นสุด','Platform','หัวข้อ','ประเภท','Status','รายละเอียด','วันสำคัญ']];
+  const rows = [['วันที่','เดือน','ปี','เวลาเริ่ม','เวลาสิ้นสุด','ทีม','Platform','หัวข้อ','ประเภท','Status','รายละเอียด','วันสำคัญ']];
   const allKeys = Object.keys(data).sort();
   allKeys.forEach(key => {
     const [y, m, d] = key.split('-');
@@ -668,6 +750,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
         d, MONTHS[parseInt(m)-1], y,
         c.time || '',
         c.timeEnd || '',
+        c.team || '',
         PLAT_LABELS[c.plat] || c.plat,
         c.title || '', c.type || '',
         {draft:'Draft',review:'In review',approved:'Approved',done:'Done'}[c.status] || c.status,
@@ -692,6 +775,12 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function showConflictAlert(msg) {
+  const el = document.getElementById('conflict-alert');
+  el.querySelector('.conflict-msg').textContent = msg;
+  el.style.display = 'flex';
 }
 
 // Keyboard shortcut — Escape closes modal
