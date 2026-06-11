@@ -250,9 +250,19 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
       <button class="close-btn" id="closeModal">&#215;</button>
     </div>
 
-    <div class="form-row">
-      <label>วันที่</label>
-      <input type="text" id="f-date" readonly style="background:var(--bg);cursor:default">
+    <div style="display:flex;gap:10px">
+      <div class="form-row" style="flex:1">
+        <label>วันที่</label>
+        <input type="text" id="f-date" readonly style="background:var(--bg);cursor:default">
+      </div>
+      <div class="form-row" style="width:175px">
+        <label>เวลา</label>
+        <div style="display:flex;align-items:center;gap:5px">
+          <input type="time" id="f-time" value="09:00" style="flex:1;min-width:0;font-size:13px;padding:7px 6px;border:1px solid rgba(0,0,0,0.12);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;outline:none">
+          <span style="color:var(--text-muted);font-size:12px;flex-shrink:0">–</span>
+          <input type="time" id="f-time-end" value="10:00" style="flex:1;min-width:0;font-size:13px;padding:7px 6px;border:1px solid rgba(0,0,0,0.12);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;outline:none">
+        </div>
+      </div>
     </div>
     <div class="form-row">
       <label>Platform</label>
@@ -266,7 +276,21 @@ body{font-family:'Sarabun',system-ui,sans-serif;background:var(--bg);color:var(-
     </div>
     <div class="form-row">
       <label>หัวข้อคอนเทนต์</label>
-      <input type="text" id="f-title" placeholder="เช่น วันเฉลิมพระชนมพรรษา, โปรโมชั่นเดือนนี้...">
+      <input type="text" id="f-title" list="title-suggestions" placeholder="เลือกหรือพิมพ์หัวข้อ...">
+      <datalist id="title-suggestions">
+        <option value="กิจกรรมนักศึกษา">
+        <option value="สมัครเรียน">
+        <option value="วันเฉลิมพระชนมพรรษา">
+        <option value="วันสำคัญ">
+        <option value="โปรโมชั่นเดือนนี้">
+        <option value="แนะนำหลักสูตร">
+        <option value="Behind the Scenes">
+        <option value="ประกาศผลการเรียน">
+        <option value="รับสมัครนักศึกษาใหม่">
+        <option value="กิจกรรม Open House">
+        <option value="ทุนการศึกษา">
+        <option value="ข่าวประชาสัมพันธ์">
+      </datalist>
     </div>
     <div class="form-row">
       <label>ประเภทคอนเทนต์</label>
@@ -308,8 +332,9 @@ const MONTHS = ['มกราคม','กุมภาพันธ์','มีน
 const PLAT_LABELS = {tiktok:'TikTok',facebook:'Facebook',ig:'Instagram',lineoa:'Line OA',youtube:'YouTube'};
 const THBE = 543;
 
-// Thai holidays 2569
+// Thai holidays 2569–2570
 const HOLIDAYS = {
+  // 2569
   '2569-1-1':'วันขึ้นปีใหม่',
   '2569-2-12':'วันมาฆบูชา',
   '2569-4-6':'วันจักรี',
@@ -330,6 +355,29 @@ const HOLIDAYS = {
   '2569-12-5':'วันพ่อแห่งชาติ',
   '2569-12-10':'วันรัฐธรรมนูญ',
   '2569-12-31':'วันสิ้นปี',
+  // 2570
+  '2570-1-1':'วันขึ้นปีใหม่',
+  '2570-2-21':'วันมาฆบูชา',
+  '2570-2-22':'ชดเชยวันมาฆบูชา',
+  '2570-4-6':'วันจักรี',
+  '2570-4-13':'วันสงกรานต์',
+  '2570-4-14':'วันสงกรานต์',
+  '2570-4-15':'วันสงกรานต์',
+  '2570-5-1':'วันแรงงาน',
+  '2570-5-3':'ชดเชยวันแรงงาน',
+  '2570-5-20':'วันวิสาขบูชา',
+  '2570-6-3':'วันเฉลิมฯ สมเด็จพระนางเจ้าสุทิดา',
+  '2570-7-18':'วันอาสาฬหบูชา',
+  '2570-7-19':'วันเข้าพรรษา',
+  '2570-7-28':'วันเฉลิมฯ ร.10',
+  '2570-8-12':'วันแม่แห่งชาติ',
+  '2570-10-13':'วันนวมินทรมหาราช',
+  '2570-10-23':'วันปิยมหาราช',
+  '2570-10-26':'ชดเชยวันปิยมหาราช',
+  '2570-12-5':'วันพ่อแห่งชาติ',
+  '2570-12-6':'ชดเชยวันพ่อแห่งชาติ',
+  '2570-12-10':'วันรัฐธรรมนูญ',
+  '2570-12-31':'วันสิ้นปี',
 };
 
 // Sample initial data
@@ -461,7 +509,7 @@ function render() {
       const realIdx = (data[key] || []).indexOf(c);
       const cc = document.createElement('div');
       cc.className = 'ccard p-' + c.plat;
-      cc.innerHTML = `<span class="plat-indicator" style="background:${platColor(c.plat)}"></span><span class="ctitle">${c.title || c.type}</span><span class="sbadge s-${c.status}">${statusLabel(c.status)}</span>`;
+      cc.innerHTML = `<span class="plat-indicator" style="background:${platColor(c.plat)}"></span><span class="ctitle">${c.time ? '<span style="opacity:.6;font-size:9px;margin-right:2px">'+c.time+(c.timeEnd?'–'+c.timeEnd:'')+'</span>' : ''}${c.title || c.type}</span><span class="sbadge s-${c.status}">${statusLabel(c.status)}</span>`;
       cc.addEventListener('click', e => { e.stopPropagation(); openModal(key, realIdx); });
       cards.appendChild(cc);
     });
@@ -503,6 +551,8 @@ function openModal(key, idx) {
     const c = data[key][idx];
     document.getElementById('f-plat').value = c.plat;
     document.getElementById('f-title').value = c.title || '';
+    document.getElementById('f-time').value = c.time || '09:00';
+    document.getElementById('f-time-end').value = c.timeEnd || '10:00';
     document.getElementById('f-type').value = c.type || 'Live Stream';
     document.getElementById('f-note').value = c.note || '';
     setStatus(c.status);
@@ -538,6 +588,8 @@ document.getElementById('saveBtn').addEventListener('click', () => {
   const c = {
     plat: document.getElementById('f-plat').value,
     title: document.getElementById('f-title').value.trim() || document.getElementById('f-type').value,
+    time: document.getElementById('f-time').value,
+    timeEnd: document.getElementById('f-time-end').value,
     type: document.getElementById('f-type').value,
     note: document.getElementById('f-note').value.trim(),
     status: modalStatus
@@ -607,13 +659,15 @@ document.getElementById('addBtn').addEventListener('click', () => {
 
 // Export CSV
 document.getElementById('exportBtn').addEventListener('click', () => {
-  const rows = [['วันที่','เดือน','ปี','Platform','หัวข้อ','ประเภท','Status','รายละเอียด','วันสำคัญ']];
+  const rows = [['วันที่','เดือน','ปี','เวลาเริ่ม','เวลาสิ้นสุด','Platform','หัวข้อ','ประเภท','Status','รายละเอียด','วันสำคัญ']];
   const allKeys = Object.keys(data).sort();
   allKeys.forEach(key => {
     const [y, m, d] = key.split('-');
     (data[key] || []).forEach(c => {
       rows.push([
         d, MONTHS[parseInt(m)-1], y,
+        c.time || '',
+        c.timeEnd || '',
         PLAT_LABELS[c.plat] || c.plat,
         c.title || '', c.type || '',
         {draft:'Draft',review:'In review',approved:'Approved',done:'Done'}[c.status] || c.status,
